@@ -7,6 +7,7 @@ const AuthForm = () => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -19,9 +20,10 @@ const AuthForm = () => {
     const enteredPassword = passwordInputRef.current.value;
 
     // optional: add validation logic
-    console.log(enteredEmail);
-    console.log(enteredPassword);
+    // console.log(enteredEmail);
+    // console.log(enteredPassword);
 
+    setIsLoading(true);
     if (isLogin) {
     } else {
       // sign in from supabase
@@ -29,10 +31,24 @@ const AuthForm = () => {
         email: `${enteredEmail}`,
         password: `${enteredPassword}`,
       });
-      if (data.status !== 201) {
-        console.log(error);
-        console.log(data);
+      // console.log(data);
+      setIsLoading(false);
+      if (data && error) {
+        alert(error.message);
+      } else {
+        console.log(JSON.stringify(data));
       }
+      // if (data.signup.status === 200) {
+      //   console.log(JSON.stringify(data));
+      // } else {
+      //   let errorMessage = "Authentication failed!";
+      //   if (data && error) {
+      //     errorMessage = error.message;
+      //   }
+      //   alert(errorMessage);
+      // error modal goes here
+      // console.log(error);
+      // console.log(JSON.stringify(data));
     }
   };
 
@@ -54,7 +70,10 @@ const AuthForm = () => {
           />
         </div>
         <div className={classes.actions}>
-          <button>{isLogin ? "Login" : "Create Account"}</button>
+          {!isLoading && (
+            <button>{isLogin ? "Login" : "Create Account"}</button>
+          )}
+          {isLoading && <p>Sending request...</p>}
           <button
             type="button"
             className={classes.toggle}
