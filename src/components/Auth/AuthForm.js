@@ -1,11 +1,18 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import supabase from "../../client";
+import AuthContext from "../../store/auth-context";
+import { useHistory } from "react-router-dom";
 
 import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
+  const history = useHistory();
+
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
+
+  const authCtx = useContext(AuthContext);
+
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,36 +26,37 @@ const AuthForm = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    // optional: add validation logic
-    // console.log(enteredEmail);
-    // console.log(enteredPassword);
-
     setIsLoading(true);
+    // if login state sign in with password request
     if (isLogin) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: `${enteredEmail}`,
+        password: `${enteredPassword}`,
+      });
+      setIsLoading(false);
+      if (error) {
+        alert(error.message);
+      } else {
+        authCtx.login(data.session.access_token);
+        // console.log(JSON.stringify(data.session.access_token));
+        console.log("welcome");
+        history.replace("/");
+      }
     } else {
-      // sign in from supabase
+      // or sign up request
       const { data, error } = await supabase.auth.signUp({
         email: `${enteredEmail}`,
         password: `${enteredPassword}`,
       });
-      // console.log(data);
       setIsLoading(false);
-      if (data && error) {
+      if (error) {
         alert(error.message);
       } else {
-        console.log(JSON.stringify(data));
+        authCtx.login(data.session.access_token);
+        // console.log(JSON.stringify(data));
+        console.log("welcome");
+        history.replace("/");
       }
-      // if (data.signup.status === 200) {
-      //   console.log(JSON.stringify(data));
-      // } else {
-      //   let errorMessage = "Authentication failed!";
-      //   if (data && error) {
-      //     errorMessage = error.message;
-      //   }
-      //   alert(errorMessage);
-      // error modal goes here
-      // console.log(error);
-      // console.log(JSON.stringify(data));
     }
   };
 
