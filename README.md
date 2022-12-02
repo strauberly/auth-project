@@ -2,6 +2,20 @@
 
 ## A simple React application implementing authentication for Supabase backend and displaying different content once authenticated.
 
+-- 2 Dec 2022 --
+
+- Secured profile route based on if user is logged in through our auth context.
+
+- User auth token now persists in local storage so page can be refreshed and login persists, token is cleared on logout.
+
+- User auth token now expires after about 10 min. Combination of helper function for determining time and amount of remaining time and passing an expirationTime value to our auth context.
+
+- Timeout now auto clears if user logs out manually.
+
+- This update concludes this course section study. Thank you for checking out what I have been working on. Cheers!
+
+---
+
 -- 1 Dec 2022 --
 
 - Login has been implemented with user feedback and has desired response. Ie. We will get our access token.
