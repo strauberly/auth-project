@@ -37,8 +37,11 @@ const AuthForm = () => {
       if (error) {
         alert(error.message);
       } else {
-        authCtx.login(data.session.access_token);
-        // console.log(JSON.stringify(data.session.access_token));
+        const expirationTime = new Date(
+          new Date().getTime() + +data.session.expires_in
+        );
+        authCtx.login(data.session.access_token, expirationTime.toISOString());
+        // console.log(JSON.stringify(data));
         console.log("welcome");
         history.replace("/");
       }
@@ -54,6 +57,7 @@ const AuthForm = () => {
       } else {
         authCtx.login(data.session.access_token);
         // console.log(JSON.stringify(data));
+        alert("account created now please login");
         console.log("welcome");
         history.replace("/");
       }
